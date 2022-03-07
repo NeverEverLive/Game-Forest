@@ -1,0 +1,43 @@
+{% extends 'index.html' %}
+{% load static %}
+{% block content %}
+    <p><a href="/">Back</a></p>
+    <h1>{{ game.title }}</h1>
+    <p><img src="{{ game.image.file.url }}"></p>
+    <p>Genre: {{ game.genre.name }}</p>
+    {% for d in developer %}
+        <p> {{d.name}} </p>
+        {% if d.game.id == game.id%}
+            <p>Developer: {{d.company.name}}</p>
+        {% endif %}
+    {% endfor %}
+    {% for p in publisher %}
+        <p> {{p.name}} </p>
+        {% if p.game.id == game.id%}
+            <p>Publisher: {{p.company.name}}</p>
+        {% endif %}
+    {% endfor %}
+    {% for s in sponsor %}
+        <p> {{s.name}} </p>
+        {% if s.game.id == game.id%}
+            <p>Sponsor: {{s.company.name}}</p>
+        {% endif %}
+    {% endfor %}
+    {% for a in award|slice:":1" %}
+        {% if a.game.id == game.id%}
+            <b>Award:</b>
+        {% endif %}
+    {% endfor %}
+    <ul>
+        {% for a in award %}
+            {% if a.game.id == game.id%}
+                <li>
+                    <p>{{a.award.name}}</p>
+                </li>
+            {% endif %}
+        {% endfor %}
+    </ul>
+
+    <p>Description: {{ game.description }}</p>
+    <p>Created by: {{ game.user.username }}</p>
+{% endblock %}

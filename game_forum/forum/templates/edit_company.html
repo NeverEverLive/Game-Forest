@@ -1,0 +1,81 @@
+{% extends 'index.html' %}
+{% block content %}
+    <h1 class="mt-4">Admin panel</h1>
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+      Create new company
+    </button>
+
+{% if success %}
+    <p class="mt-4" style="color:green">Record added</p>
+{% endif %}
+
+{% if update %}
+    {% if success_update %}
+        <p class="mt-4" style="color:green">Success update</p>
+    {% endif %}
+    <button type="button" class="btn btn-primary" style="position:absolute; right: 325px;"
+            onclick="window.location.href={% url 'edit_company' %}">Back</button>
+    <p class="mt-4">Update Page</p>
+    <form id="update_form" method="post">
+      {% csrf_token %}
+      {{update_form}}
+    </form>
+    <button form="update_form" type="submit" class="btn btn-primary mt-4">Update</button>
+
+{% else %}
+    <button type="button" class="btn btn-primary" style="position:absolute; right: 325px;"
+            onclick="window.location.href={% url 'edit' %}">Back</button>
+        <table class="table table-hover mt-4">
+            <thead>
+                <tr>
+                  <th scope="col">id</th>
+                  <th scope="col">Name</th>
+                  <th scope="col">Description</th>
+                    {% for group in request.user.groups.all %}
+                        {% if group.name == 'Editor'%}
+                          <th scope="col">Update</th>
+                          <th scope="col">Delete</th>
+                        {% endif %}
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in company %}
+                    <tr {% if i.id|slugify == request.GET.id %} style="background-color:#FFA500" {% endif %}>
+                      <th>{{i.id}}</th>
+                      <td>{{i.name}}</td>
+                      <td>{{i.description}}</td>
+                        <td style="width: 90px">
+                            <button type="button" class="btn btn-primary"  onclick="location.href='{% url 'update_company' i.pk %}'">Update</button>
+                        </td>
+                        <td style="width: 90px">
+                            <button type="button" class="btn btn-danger" onclick="location.href='{% url 'delete_company' i.pk %}'">Delete</button>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+{% endif %}
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Create company</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+              <form id="add_form" method="post">
+                  {% csrf_token %}
+                  {{form}}
+              </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button form="add_form" type="submit" class="btn btn-primary">Add</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+{% endblock %}
